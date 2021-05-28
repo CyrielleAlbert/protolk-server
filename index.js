@@ -2,9 +2,19 @@ var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var port = 8888;
+var clients = {};
 
 io.on('connection', (socket) => {
     console.log("Server detect a connection")
+    
+    //Add user to connected clients
+    clients[socket.handshake.query.userId] = {
+        name:socket.handshake.query.name,
+        surname:socket.handshake.query.surname,
+        jobTitle:socket.handshake.query.jobTitle,
+        socket:socket
+    }
+
     socket.on('join', function (data) {
         console.log("Connection")
         console.log(data)
@@ -32,6 +42,12 @@ io.on('connection', (socket) => {
         if (socket.room) {
             io.to(socket.room).emit('disconnected')
         }
+        //Remove user from connected clients
+        Object.keys(clients).forEach(userId=>{
+            if (clients[userId].socket ===socket){
+                delete clients[userId]
+            }
+        })
 
     })
 });
