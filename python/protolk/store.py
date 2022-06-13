@@ -1,19 +1,11 @@
-import motor.motor_asyncio
-
-from .logger import LOGGER
+"""Store is the interface between the app and mongo."""
+from typing import Dict
 
 class Store:
     """Class that communicates with mongodb."""
-    def __init__(self):
+    def __init__(self, motor_client, db_name: str):
         """Create Store instance."""
-        host = "localhost"
-        port = 27017
-        mongodb_url = f"mongodb://{host}:{port}"
-        app_name = "app"
-        self._client = motor.motor_asyncio.AsyncIOMotorClient(
-            mongodb_url
-        )
-        database = self._client.get_database(app_name)
+        database = motor_client.get_database(db_name)
         self._users = database.get_collection("users")
         self._rooms = database.get_collection("rooms")
         self._sessions = database.get_collection("sessions")
@@ -24,27 +16,27 @@ class Store:
         await self._rooms.create_index("id", unique=True)
         await self._sessions.create_index("id", unique=True) 
 
-    async def get_user(self, user_id):
+    async def get_user(self, user_id: str):
         """Get a single user."""
         projection = {"_id": False}
         return await self._users.find_one({"id": user_id}, projection)
 
-    async def get_users(self, limits=10):
+    async def get_users(self, limits: int=10):
         """Get all users."""
         projection = {"_id": False}
         return await self._users.find({}, projection).to_list(length=limits)
 
-    async def post_user(self, user):
+    async def post_user(self, user: Dict):
         """Insert a new user."""
-        try:
-            await self._user.insert_one(user)
-        except Exception as e:
-            LOGGER.error(f"Error during post_user: {e}")
-            return False
-        return True
+        res = await self._users.insert_one(user)
+        return bool(res.inserted_count)
 
-    async def delete_user(self, used_id):
-        """Remove user."""
-        await self._user.delete_one({"id": used_id})
-        return True
+    async def delete_user(self, used_id: str):
+        """Delete a specific user."""
+        res = await self._users.delete_one({"id": used_id})
+        return bool(res.deleted_count)
 
+    async def delete_users(self):
+        """Delete all users."""
+        await self._users.delete_many({})
+        return True
