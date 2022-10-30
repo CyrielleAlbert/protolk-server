@@ -1,8 +1,18 @@
 {
   "dependencies": {
     "axios": "^0.27.2",
+    "body-parser": "^1.20.1",
+    "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.17.1",
-    "socket.io": "^2.2.0"
+    "mysql": "^2.18.1",
+    "socket.io": "^2.2.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  },
+  "scripts": {
+    "start-server": "./node_modules/nodemon/bin/nodemon.js server-rest.js"
   }
 }

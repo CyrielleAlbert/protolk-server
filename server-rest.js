@@ -1,18 +1,30 @@
 var axios = require("axios");
 var qs = require("qs");
+var uuid = require("uuid");
+var cors = require("cors");
+var bodyParser = require("body-parser");
 
 var app = require("express")();
+const mysql = require("mysql");
+const { databaseTools } = require("./Cyri-tests/db-tools");
+
 const port = 8888;
 require("dotenv").config();
 
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000"); // update to match the domain you will make the request from
-  res.header(
-    "Access-Control-Allow-Headers",
-    "X-ACCESS_TOKEN, Access-Control-Allow-Origin, Authorization, Origin, x-requested-with, Content-Type, Content-Range, Content-Disposition, Content-Description"
-  );
-  next();
+//local test database - mock data
+
+const pool = mysql.createPool({
+  connectionLimit: 100, //important
+  host: "localhost",
+  user: "newuser",
+  password: "newpassword",
+  database: "PROTOLK_DB_TEST",
+  debug: false,
 });
+
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.get("/linkedin/accessToken", (req, res, next) => {
   console.log("🔑 Get access Token");
@@ -49,7 +61,7 @@ app.get("/linkedin/profile", (req, res) => {
 
   var config = {
     method: "get",
-    url: "https://api.linkedin.com/v2/me",
+    url: "https://api.linkedin.com/v2/me?projection=(id,firstName,lastName,profilePicture(displayImage~:playableStreams))",
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -58,12 +70,45 @@ app.get("/linkedin/profile", (req, res) => {
   axios(config)
     .then((response) => {
       console.log("✅ Request successful - Profile information fetched");
+      // console.log(response.data);
       return res.send(response.data);
     })
     .catch((error) => {
       console.log("❌ Error in the matrix");
       return res.send(error);
     });
+});
+
+app.get("/data/getUserData", (req, res) => {
+  console.log("ℹ️ Get user info");
+  const token = req.query.token;
+
+  pool.query(
+    `SELECT * from Users WHERE Users.token = ${token}`,
+    (err, resp) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      console.log(resp);
+      res.send(resp);
+    }
+  );
+});
+
+app.post("/data/addNewUser", (req, res) => {
+  var data = JSON.parse(Object.keys(req.body)[0]);
+  const userData = {
+    token: data.token,
+    firstName: data.firstName,
+    lastName: data.lastName,
+    id: data.id,
+    // jobTitle: data.jobTitle,
+  };
+  // console.log(userData);
+  databaseTools.addNewUser(pool, userData, (response) => {
+    res.send(response);
+  });
 });
 
 app.listen(port, () => console.log("Server is listening on port: ", port));
