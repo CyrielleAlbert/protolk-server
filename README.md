@@ -1,53 +1,51 @@
-# Digital Ocean Droplet IaC
+# Server of Protolk
 
-## Sources
+## Prerequisite
 
-* https://www.digitalocean.com/community/tutorials/how-to-use-terraform-with-digitalocean
+[![Generic badge](https://img.shields.io/badge/NodeJS-18.11.0-<COLOR>.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/MySQL-8.0.31-<COLOR>.svg)](https://shields.io/)
 
-## Install Terraform
+## Run a demo with a local dB
+
+Frontend Repo can be fount [here](https://github.com/CyrielleAlbert/protolk)
+
+### MySQL dB
+
+#### Create a mySQL database
 
 ```bash
-curl -o ~/terraform.zip https://releases.hashicorp.com/terraform/1.1.3/terraform_1.1.3_linux_amd64.zip
-sudo mkdir /opt/terraform
-sudo unzip ~/terraform.zip -d ~/opt/terraform
+mysql -u root
 ```
 
-Add Digital Ocean token:
-
-```bash
-export DO_PAT="your personal token"
+```SQL
+CREATE DATABASE PROTOLK_DB_TEST;
+USE PROTOLK_DB_TEST;
+SHOW TABLES;
 ```
 
-## Initialize Terraform for the project
+#### Grant access
 
-```bash
-terraform init
+```SQL
+CREATE USER 'newuser'@'localhost' IDENTIFIED WITH 'mysql_native_password' BY 'newpassword';
+GRANT ALL PRIVILEGES ON * . * TO 'newuser'@'localhost';
+FLUSH PRIVILEGES;
 ```
 
-## Create the droplet
-
-First add your ssh key to your ssh agent:
+#### Create the tables
 
 ```bash
-ssh-add
+node Cyri-tests/db-init_create_tables.js
 ```
 
-Terraform plan:
+#### Populate mock-data
 
 ```bash
-terraform plan -var "do_token=${DO_PAT}" 
+node Cyri-tests/db-init_insert_mock_data.js
 ```
 
-Terraform apply:
+#### Run the server
 
 ```bash
-terraform apply -var "do_token=${DO_PAT}"
-```
-
-After terraform apply succeeds, you should be able to connect to the server and to see the nginx home page.
-
-## Destroy the droplet
-
-```bash
-terraform destroy -var "do_token=${DO_PAT}"
+npm install
+node server-rest.js
 ```
