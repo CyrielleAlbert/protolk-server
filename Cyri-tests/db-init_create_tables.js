@@ -22,7 +22,7 @@ pool.query(
 );
 //Create Tag Table
 pool.query(
-  "CREATE TABLE Tags (Id varchar(255) NOT NULL PRIMARY KEY, Value varchar(255));",
+  "CREATE TABLE Tags (Id varchar(255) NOT NULL PRIMARY KEY, Value varchar(255)), Color_hex varchar(255);",
   (err, resp) => {
     if (err) {
       console.log(err);

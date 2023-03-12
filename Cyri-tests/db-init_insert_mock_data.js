@@ -38,7 +38,7 @@ pool.query(
 // Insert mock Tags data
 
 pool.query(
-  "INSERT INTO Tags (Id, Value) VALUES ('000001','Dev'),('000002','React'),('000003','Product dev'),('000004','Personal dev'),('000005','Data analysis'),('000006','Marketing'),('000007','Growth'),('000008','SEO'),('000009','Recruitment'),('000010','Networking'),  ('000011','Nerds'),('000012','London');",
+  "INSERT INTO Tags (Id, Value, Color_hex) VALUES ('000001','Dev', '#FFCFE6'),('000002','React','#FFCFE6'),('000003','Product dev','#FFCFE6'),('000004','Personal dev','#FFCFE6'),('000005','Data analysis','#AFEDB1'),('000006','Marketing','#AFEDB1'),('000007','Growth','#AFEDB1'),('000008','SEO','#AFEDB1'),('000009','Recruitment','#AFB5ED'),('000010','Networking','#AFB5ED'),  ('000011','Nerds','#AFB5ED'),('000012','London','#AFB5ED');",
   (err, resp) => {
     if (err) {
       console.log(err);

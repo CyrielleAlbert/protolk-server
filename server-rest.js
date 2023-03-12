@@ -15,11 +15,18 @@ require("dotenv").config();
 
 const pool = mysql.createPool({
   connectionLimit: 100, //important
-  host: "localhost",
+  host: "127.0.0.1",
   user: "newuser",
   password: "newpassword",
   database: "PROTOLK_DB_TEST",
   debug: false,
+});
+pool.query(`SELECT * from USERS`, (err, resp) => {
+  if (err) {
+    console.log(err);
+  } else {
+    //console.log(resp);
+  }
 });
 
 app.use(cors());
@@ -97,6 +104,7 @@ app.get("/data/getUserData", (req, res) => {
 });
 
 app.post("/data/addNewUser", (req, res) => {
+  console.log("ℹ️ Add new user in dB");
   var data = JSON.parse(Object.keys(req.body)[0]);
   const userData = {
     token: data.token,
@@ -107,6 +115,31 @@ app.post("/data/addNewUser", (req, res) => {
   };
   // console.log(userData);
   databaseTools.addNewUser(pool, userData, (response) => {
+    res.send(response);
+  });
+});
+
+// app.post("/data/updateToken", (req, res) => {
+//   console.log("ℹ️ Update token in dB");
+//   var data = JSON.parse(Object.keys(req.body)[0]);
+//   const query = `UPDATE Users SET token = ${data.token} WHERE id = ${data.id}`;
+//   pool.query(query, (err, resp) => {
+//     if (err) {
+//       console.log(err);
+//       console.log("❌ Error in the matrix");
+//       return;
+//     }
+//     console.log(resp);
+//     console.log("✅ Request successful - Token updated");
+//     res.send(resp);
+//   });
+// });
+
+app.get("/data/getUserTags", (req, res) => {
+  console.log("ℹ️ Get User Tags Information");
+
+  const token = req.query.token;
+  databaseTools.getUserTags(pool, token, (response) => {
     res.send(response);
   });
 });
