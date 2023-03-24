@@ -74,10 +74,10 @@ pool.query(
   }
 );
 
-//Insert Connection Data
+//Insert Room_users (connection) Data
 
 pool.query(
-  "INSERT INTO Room_users (Room_id, User_id) VALUES ('jco206','7d0abc3c-7c08-46d9-b65f-d0a67ddd2886'),('jco206','ec5a8e3f-363d-44d0-9358-56243e947ecb'),('ajr253','81de446c-a61a-4484-ac9c-a9e152d5eae5'),('ajr253','09a154fc-1d55-493a-99ae-e7452cc63ca7'),('ajr253','8b14cc19-af20-4e7c-bc0f-6d03ecc755a2');",
+  "INSERT INTO Room_users (id,Room_id, User_id_1, User_id_2) VALUES ('ajf23','jco206','7d0abc3c-7c08-46d9-b65f-d0a67ddd2886','ec5a8e3f-363d-44d0-9358-56243e947ecb'),('gkti23','ajr253','81de446c-a61a-4484-ac9c-a9e152d5eae5','09a154fc-1d55-493a-99ae-e7452cc63ca7'),('kgju561'ajr253','8b14cc19-af20-4e7c-bc0f-6d03ecc755a2','wFBiQksNBi');",
   (err, resp) => {
     if (err) {
       console.log(err);

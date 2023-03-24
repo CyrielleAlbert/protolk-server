@@ -67,9 +67,9 @@ pool.query(
   }
 );
 
-//Create connection Table
+//Create Session Table
 pool.query(
-  "CREATE TABLE Room_users (Room_id varchar(255), User_id varchar(255),PRIMARY KEY(Room_id, User_id));",
+  "CREATE TABLE Session (id varchar(255) NOT NULL PRIMARY KEY,User_id_1 varchar(255), User_id_2 varchar(255), Room_id varchar(255));",
   (err, resp) => {
     if (err) {
       console.log(err);

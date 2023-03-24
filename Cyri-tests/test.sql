@@ -83,3 +83,17 @@ WHERE User_tags.User_id = Users.id AND User_tags.tag_id = tags.id;
 SELECT  Rooms.id as RoomID, Rooms.name as RoomName, Tags.value as Tag
 FROM Room_tags, Rooms, Tags 
 WHERE Room_tags.Room_id = Rooms.id AND Room_tags.tag_id = tags.id;
+
+
+-- Get all rooms info 
+SELECT t.Id as id, t.Name as name, t.number_participants as number_participants, Group_concat(tags_value) as tags_value, Group_concat(tags_color) as tags_color \
+    FROM (SELECT rooms.id as Id, rooms.name as Name, count(distinct session.user_id_1)+count(distinct session.user_id_2) as number_participants  \
+   from rooms \
+   left outer join \
+   session on rooms.id= session.room_id \
+   group by rooms.id) as t\
+   Left outer join\
+   (Select Room_tags.room_id as room_id,Tags.id as tags_id, Tags.value as tags_value, Tags.color_hex as tags_color\
+   from Room_tags, Tags \
+   WHERE Room_tags.tag_id = tags.id) as b on t.id = b.room_id\
+   group by t.id;

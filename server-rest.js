@@ -144,4 +144,11 @@ app.get("/data/getUserTags", (req, res) => {
   });
 });
 
+app.get("/data/getRooms", (req, res) => {
+  console.log("ℹ️ Get Rooms Information");
+  databaseTools.getRooms(pool, (response) => {
+    res.send(response);
+  });
+});
+
 app.listen(port, () => console.log("Server is listening on port: ", port));
